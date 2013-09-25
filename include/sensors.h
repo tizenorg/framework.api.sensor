@@ -108,8 +108,8 @@ typedef enum
 typedef enum
 {
 	SENSOR_MOTION_SNAP_NONE,            /**< No Snap */
-	SENSOR_MOTION_SNAP_LEFT,            /**< Snap left to right */
 	SENSOR_MOTION_SNAP_RIGHT,           /**< Snap right to left */
+	SENSOR_MOTION_SNAP_LEFT,            /**< Snap left to right */
 	SENSOR_MOTION_SNAP_X_POSITIVE = SENSOR_MOTION_SNAP_RIGHT, /**< Snap to positive direction in X-axis, it is the same as @SENSOR_MOTION_SNAP_RIGHT */
 	SENSOR_MOTION_SNAP_X_NEGATIVE = SENSOR_MOTION_SNAP_LEFT, /**< Snap to negative direction in X-axis, it is the same as @SENSOR_MOTION_SNAP_LEFT */
 	SENSOR_MOTION_SNAP_Y_POSITIVE, /**< Snap to positive direction in Y-axis */
