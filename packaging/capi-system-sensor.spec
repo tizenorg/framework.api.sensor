@@ -48,9 +48,9 @@ cp LICENSE %{buildroot}/usr/share/license/%{name}
 %files
 %manifest capi-system-sensor.manifest
 %{_libdir}/libcapi-system-sensor.so.*
+%{_datadir}/license/%{name}
 
 %files devel
 %{_includedir}/system/sensors.h
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/libcapi-system-sensor.so
-/usr/share/license/%{name}
