@@ -1,8 +1,7 @@
 Name:       capi-system-sensor
 Summary:    A Sensor library in TIZEN C API
-Version: 0.1.17
+Version:    0.1.18
 Release:    10
-VCS:        framework/api/sensor#submit/master/20130801.121618-2-g869ffbd03f17e99a13d563b3504a92808213ba12
 Group:      TO_BE/FILLED_IN
 License:    Apache 2.0
 Source0:    %{name}-%{version}.tar.gz
@@ -10,7 +9,7 @@ BuildRequires:  cmake
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(sensor)
 BuildRequires:  pkgconfig(capi-base-common)
-Requires(post): /sbin/ldconfig  
+Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
 %description
@@ -28,8 +27,11 @@ Requires: %{name} = %{version}-%{release}
 %prep
 %setup -q
 
-
 %build
+%if 0%{?tizen_build_binary_release_type_eng}
+export CFLAGS+=" -DTIZEN_ENGINEER_MODE"
+%endif
+
 MAJORVER=`echo %{version} | awk 'BEGIN {FS="."}{print $1}'`
 cmake . -DCMAKE_INSTALL_PREFIX=/usr -DFULLVER=%{version} -DMAJORVER=${MAJORVER}
 
@@ -54,7 +56,7 @@ cp LICENSE %{buildroot}/usr/share/license/%{name}
 /usr/share/license/%{name}
 
 %files devel
-%{_includedir}/system/sensors.h
+%{_includedir}/sensor/*.h
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/libcapi-system-sensor.so
 

@@ -22,6 +22,9 @@ ENDFOREACH(flag)
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror -g -fdump-rtl-expand")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Werror -g -fPIC -fdump-rtl-expand -std=c++0x")
+SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+
 IF("${ARCH}" STREQUAL "arm")
     ADD_DEFINITIONS("-DTARGET")
 ENDIF("${ARCH}" STREQUAL "arm")
@@ -45,9 +48,10 @@ SET_TARGET_PROPERTIES(${fw_name}
 
 INSTALL(TARGETS ${fw_name} DESTINATION lib)
 INSTALL(
-        DIRECTORY ${INC_DIR}/ DESTINATION include/system
+        DIRECTORY ${INC_DIR}/ DESTINATION include/sensor
         FILES_MATCHING
         PATTERN "*_private.h" EXCLUDE
+        PATTERN "*_log.h" EXCLUDE
         PATTERN "${INC_DIR}/*.h"
         )
 
@@ -66,10 +70,10 @@ IF(UNIX)
 
 ADD_CUSTOM_TARGET (distclean @echo cleaning for source distribution)
 ADD_CUSTOM_COMMAND(
-        DEPENDS clean 
+        DEPENDS clean
         COMMENT "distribution clean"
         COMMAND find
-        ARGS    . 
+        ARGS    .
         -not -name config.cmake -and \(
         -name tester.c -or
         -name Testing -or
