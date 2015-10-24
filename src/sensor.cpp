@@ -63,6 +63,10 @@ sensor_type_t _TYPE[] = {
 	BIO_LED_GREEN_SENSOR,
 	BIO_LED_IR_SENSOR,
 	BIO_LED_RED_SENSOR,
+	GYROSCOPE_UNCAL_SENSOR,
+	GEOMAGNETIC_UNCAL_SENSOR,
+	GAMING_RV_SENSOR,
+	GEOMAGNETIC_RV_SENSOR,
 };
 
 static int sensor_connect (sensor_h sensor, sensor_listener_h listener)
@@ -518,12 +522,22 @@ int sensor_listener_set_max_batch_latency(sensor_listener_h listener, unsigned i
 	if (listener->magic != SENSOR_LISTENER_MAGIC)
 		return SENSOR_ERROR_INVALID_PARAMETER;
 
-	if (!sensord_change_event_max_batch_latency(listener->id, max_batch_latency))
+#ifdef BATCH_SUPPORT
+	int type;
+	unsigned int event_id;
+
+	type = (int)listener->type;
+	event_id = type << SENSOR_SHIFT_TYPE | 0x1;
+
+	if (!sensord_change_event_max_batch_latency(listener->id, event_id, max_batch_latency))
 		return SENSOR_ERROR_NOT_SUPPORTED;
 
 	_D("success sensor_set_max_batch_latency");
 
 	return SENSOR_ERROR_NONE;
+#else
+	return SENSOR_ERROR_NOT_SUPPORTED;
+#endif /* BATCH_SUPPORT */
 }
 
 int sensor_listener_set_option(sensor_listener_h listener, sensor_option_e option)

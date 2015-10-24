@@ -50,11 +50,11 @@ const float cd[13][13] = {
 float g_declination = 0;
 float g_inclination = 0;
 
-static void E0000(int IENTRY, int maxdeg, float alt,float glat,float glon, float time, float *dec, float *dip, float *ti, float *gv);
+static void E0000(int IENTRY, int maxdeg, float alt, float glat, float glon, float time, float *dec, float *dip, float *ti, float *gv);
 
 int getDeclination(float *decl)
 {
-	if(decl == NULL)
+	if (decl == NULL)
 		return -1;
 
 	*decl = g_declination;
@@ -64,7 +64,7 @@ int getDeclination(float *decl)
 
 int getInclination(float *incl)
 {
-        if(incl == NULL)
+        if (incl == NULL)
                 return -1;
 
         *incl = g_inclination;
@@ -76,29 +76,25 @@ int setCoordinate(float latitude, float longitude, float altitude, float *declin
 {
 	float dec, dip, ti, gv;
 	float h;
-	float rTd=0.017453292;
+	float rTd = 0.017453292;
 
-	E0000(0,12,0.0,0.0,0.0,0.0,NULL,NULL,NULL,NULL);
-	E0000(1,0,altitude,latitude,longitude,2,&dec,&dip,&ti,&gv);
+	E0000(0, 12, 0.0, 0.0, 0.0, 0.0, NULL, NULL, NULL, NULL);
+	E0000(1, 0, altitude, latitude, longitude, 2, &dec, &dip, &ti, &gv);
 
-	h=ti*(cos((dip*rTd)));
+	h = ti*(cos((dip*rTd)));
 
 	/* deal with geographic and magnetic poles */
 
-	if (h < 100.0) /* at magnetic poles */
-	{
+	if (h < 100.0) {    /* at magnetic poles */
 		dec = 0;
 	}
 
-	if(option == 1)
-	{
-		if(declination != NULL)
+	if (option == 1)	{
+		if (declination != NULL)
 			*declination = dec;
-		if(inclination != NULL)
+		if (inclination != NULL)
 			*inclination = dip;
-	}
-	else if( option == 0)
-	{
+	} else if (option == 0) {
 		g_declination = dec;
 		g_inclination = dip;
 	}
@@ -109,16 +105,16 @@ int setCoordinate(float latitude, float longitude, float altitude, float *declin
 
 static void E0000(int IENTRY, int maxdeg, float alt, float glat, float glon, float time, float *dec, float *dip, float *ti, float *gv)
 {
-	static int maxord,n,m,j,D1,D2,D3,D4;
-	static float tc[13][13],dp[13][13],snorm[169],
-		      sp[13],cp[13],fn[13],fm[13],pp[13],k[13][13],pi,dtr,a,b,re,
-		      a2,b2,c2,a4,b4,c4,flnmj,otime,oalt,
-		      olat,olon,dt,rlon,rlat,srlon,srlat,crlon,crlat,srlat2,
-		      crlat2,q,q1,q2,ct,st,r2,r,d,ca,sa,aor,ar,br,bt,bp,bpp,
-		      par,temp1,temp2,parp,bx,by,bz,bh;
+	static int maxord, n, m, j, D1, D2, D3, D4;
+	static float tc[13][13], dp[13][13], snorm[169],
+		      sp[13], cp[13], fn[13], fm[13], pp[13], k[13][13], pi, dtr, a, b, re,
+		      a2, b2, c2, a4, b4, c4, flnmj, otime, oalt,
+		      olat, olon, dt, rlon, rlat, srlon, srlat, crlon, crlat, srlat2,
+		      crlat2, q, q1, q2, ct, st, r2, r, d, ca, sa, aor, ar, br, bt, bp, bpp,
+		      par, temp1, temp2, parp, bx, by, bz, bh;
 	static float *p = snorm;
 
-	switch(IENTRY){case 0: goto GEOMAG; case 1: goto GEOMG1;}
+	switch (IENTRY) {case 0: goto GEOMAG; case 1: goto GEOMG1; }
 
 GEOMAG:
 	maxord = 12;
@@ -137,15 +133,12 @@ GEOMAG:
 
 	*snorm = 1.0;
 	fm[0] = 0.0;
-	for (n=1; n<=maxord; n++)
-	{
+	for (n = 1; n <= maxord; n++) {
 		*(snorm+n) = *(snorm+n-1)*(float)(2*n-1)/(float)n;
 		j = 2;
-		for (m=0,D1=1,D2=(n-m+D1)/D1; D2>0; D2--,m+=D1)
-		{
+		for (m = 0, D1 = 1, D2 = (n-m+D1)/D1; D2 > 0; D2--, m += D1) {
 			k[m][n] = (float)(((n-1)*(n-1))-(m*m))/(float)((2*n-1)*(2*n-3));
-			if (m > 0)
-			{
+			if (m > 0) {
 				flnmj = (float)((n-m+1)*j)/(float)(n+m);
 				*(snorm+n+m*13) = *(snorm+n+(m-1)*13)*sqrt(flnmj);
 				j = 1;
@@ -178,8 +171,7 @@ GEOMG1:
 	sp[1] = srlon;
 	cp[1] = crlon;
 
-	if (alt != oalt || glat != olat)
-	{
+	if (alt != oalt || glat != olat) {
 		q = sqrt(a2-c2*srlat2);
 		q1 = alt*q;
 		q2 = ((q1+a2)/(q1+b2))*((q1+a2)/(q1+b2));
@@ -191,10 +183,8 @@ GEOMG1:
 		ca = (alt+d)/r;
 		sa = c2*crlat*srlat/(r*d);
 	}
-	if (glon != olon)
-	{
-		for (m=2; m<=maxord; m++)
-		{
+	if (glon != olon) {
+		for (m = 2; m <= maxord; m++) {
 			sp[m] = sp[1]*cp[m-1]+cp[1]*sp[m-1];
 			cp[m] = cp[1]*cp[m-1]-sp[1]*sp[m-1];
 		}
@@ -202,27 +192,21 @@ GEOMG1:
 	aor = re/r;
 	ar = aor*aor;
 	br = bt = bp = bpp = 0.0;
-	for (n=1; n<=maxord; n++)
-	{
+	for (n = 1; n <= maxord; n++) {
 		ar = ar*aor;
-		for (m=0,D3=1,D4=(n+m+D3)/D3; D4>0; D4--,m+=D3)
-		{
-			if (alt != oalt || glat != olat)
-			{
-				if (n == m)
-				{
+		for (m = 0, D3 = 1, D4 = (n+m+D3)/D3; D4 > 0; D4--, m += D3) {
+			if (alt != oalt || glat != olat) {
+				if (n == m) {
 					*(p+n+m*13) = st**(p+n-1+(m-1)*13);
 					dp[m][n] = st*dp[m-1][n-1]+ct**(p+n-1+(m-1)*13);
 					goto S50;
 				}
-				if (n == 1 && m == 0)
-				{
+				if (n == 1 && m == 0) {
 					*(p+n+m*13) = ct**(p+n-1+m*13);
 					dp[m][n] = ct*dp[m][n-1]-st**(p+n-1+m*13);
 					goto S50;
 				}
-				if (n > 1 && n != m)
-				{
+				if (n > 1 && n != m) {
 					if (m > n-2) *(p+n-2+m*13) = 0.0;
 					if (m > n-2) dp[m][n-2] = 0.0;
 					*(p+n+m*13) = ct**(p+n-1+m*13)-k[m][n]**(p+n-2+m*13);
@@ -230,20 +214,16 @@ GEOMG1:
 				}
 			}
 S50:
-			if (time != otime)
-			{
+			if (time != otime) {
 				tc[m][n] = c[m][n]+dt*cd[m][n];
 				if (m != 0) tc[n][m-1] = c[n][m-1]+dt*cd[n][m-1];
 			}
 
 			par = ar**(p+n+m*13);
-			if (m == 0)
-			{
+			if (m == 0) {
 				temp1 = tc[m][n]*cp[m];
 				temp2 = tc[m][n]*sp[m];
-			}
-			else
-			{
+			} else {
 				temp1 = tc[m][n]*cp[m]+tc[n][m-1]*sp[m];
 				temp2 = tc[m][n]*sp[m]-tc[n][m-1]*cp[m];
 			}
@@ -251,8 +231,7 @@ S50:
 			bp += (fm[m]*temp2*par);
 			br += (fn[n]*temp1*par);
 
-			if (st == 0.0 && m == 1)
-			{
+			if (st == 0.0 && m == 1) {
 				if (n == 1) pp[n] = pp[n-1];
 				else pp[n] = ct*pp[n-1]-k[m][n]*pp[n-2];
 				parp = ar*pp[n];
@@ -268,11 +247,10 @@ S50:
 	bz = bt*sa-br*ca;
 	bh = sqrt((bx*bx)+(by*by));
 	*ti = sqrt((bh*bh)+(bz*bz));
-	*dec = atan2(by,bx)/dtr;
-	*dip = atan2(bz,bh)/dtr;
+	*dec = atan2(by, bx)/dtr;
+	*dip = atan2(bz, bh)/dtr;
 	*gv = -999.0;
-	if (fabs(glat) >= 55.)
-	{
+	if (fabs(glat) >= 55.) {
 		if (glat > 0.0 && glon >= 0.0) *gv = *dec-glon;
 		if (glat > 0.0 && glon < 0.0) *gv = *dec+fabs(glon);
 		if (glat < 0.0 && glon >= 0.0) *gv = *dec+glon;

@@ -1,14 +1,21 @@
 Name:       capi-system-sensor
 Summary:    A Sensor library in TIZEN C API
-Version:    0.1.18
+Version:    0.2.0
 Release:    10
 Group:      TO_BE/FILLED_IN
 License:    Apache-2.0 and PD
 Source0:    %{name}-%{version}.tar.gz
 BuildRequires:  cmake
+BuildRequires:  pkgconfig(capi-base-common)
+
+%define BUILD_PROFILE %{?profile}%{!?profile:%{?tizen_profile_name}}
+
+%if "%{?BUILD_PROFILE}" != "tv"
+##### Begin: Normal build spec #####
+
+
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(sensor)
-BuildRequires:  pkgconfig(capi-base-common)
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 
@@ -60,3 +67,46 @@ cp LICENSE %{buildroot}/usr/share/license/%{name}
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/libcapi-system-sensor.so
 
+
+##### End: Normal build spec #####
+%else
+##### Begin: Dummy build spec #####
+
+
+%description
+Native Sensor API (dummy)
+
+%package devel
+Summary:  A Sensor library in TIZEN C API (Development)
+Group:    System/API
+Requires: %{name} = %{version}-%{release}
+
+%description devel
+Native Sensor API (dummy)
+
+%prep
+%setup -q
+
+%build
+cmake ./dummy -DCMAKE_INSTALL_PREFIX=/usr -DFULLVER=%{version}
+
+make %{?jobs:-j%jobs}
+
+%install
+rm -rf %{buildroot}
+%make_install
+mkdir -p %{buildroot}/%{_datadir}/license
+cp LICENSE %{buildroot}/%{_datadir}/license/%{name}
+
+%files
+%manifest capi-system-sensor.manifest
+%{_datadir}/license/%{name}
+
+%files devel
+%manifest capi-system-sensor.manifest
+%{_includedir}/sensor/*.h
+%{_libdir}/pkgconfig/*.pc
+
+
+##### End: Dummy build spec #####
+%endif

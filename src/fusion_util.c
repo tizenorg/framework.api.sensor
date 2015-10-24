@@ -24,12 +24,12 @@ float clamp(float v)
 
 int getAngleChange(float *R, float *prevR, float *angleChange)
 {
-	if(R == NULL || prevR == NULL || angleChange == NULL)
+	if (R == NULL || prevR == NULL || angleChange == NULL)
 		return -1;
 
-	float rd1=0,rd4=0, rd6=0,rd7=0, rd8=0;
-	float ri0=0,ri1=0,ri2=0,ri3=0,ri4=0,ri5=0,ri6=0,ri7=0,ri8=0;
-	float pri0=0, pri1=0, pri2=0, pri3=0, pri4=0, pri5=0, pri6=0, pri7=0, pri8=0;
+	float rd1, rd4, rd6, rd7, rd8;
+	float ri0, ri1, ri2, ri3, ri4, ri5, ri6, ri7, ri8;
+	float pri0, pri1, pri2, pri3, pri4, pri5, pri6, pri7, pri8;
 
 	ri0 = R[0];
 	ri1 = R[1];
@@ -65,7 +65,7 @@ int getAngleChange(float *R, float *prevR, float *angleChange)
 }
 int quatToMatrix(float *quat, float *R)
 {
-	if(quat == NULL || R == NULL)
+	if (quat == NULL || R == NULL)
 		return -1;
 
 	float q0 = quat[0];
@@ -98,16 +98,16 @@ int quatToMatrix(float *quat, float *R)
 
 int matrixToQuat(float *mat, float *q)
 {
-	if(q == NULL || mat == NULL)
+	if (q == NULL || mat == NULL)
 		return -1;
 
 	const float Hx = mat[0];
 	const float My = mat[4];
 	const float Az = mat[8];
-	q[0] = sqrtf( clamp( Hx - My - Az + 1) * 0.25f );
-	q[1] = sqrtf( clamp(-Hx + My - Az + 1) * 0.25f );
-	q[2] = sqrtf( clamp(-Hx - My + Az + 1) * 0.25f );
-	q[3]= sqrtf( clamp( Hx + My + Az + 1) * 0.25f );
+	q[0] = sqrtf(clamp(Hx - My - Az + 1) * 0.25f);
+	q[1] = sqrtf(clamp(-Hx + My - Az + 1) * 0.25f);
+	q[2] = sqrtf(clamp(-Hx - My + Az + 1) * 0.25f);
+	q[3] = sqrtf(clamp(Hx + My + Az + 1) * 0.25f);
 	q[0] = copysignf(q[0], mat[7] - mat[5]);
 	q[1] = copysignf(q[1], mat[2] - mat[6]);
 	q[2] = copysignf(q[2], mat[3] - mat[1]);
@@ -117,7 +117,7 @@ int matrixToQuat(float *mat, float *q)
 
 int getRotationMatrix(float *accel, float *geo, float *R, float *I)
 {
-	if(accel == NULL || geo == NULL || R == NULL || I == NULL)
+	if (accel == NULL || geo == NULL || R == NULL || I == NULL)
 		return -1;
 
 	float Ax = accel[0];
@@ -130,7 +130,7 @@ int getRotationMatrix(float *accel, float *geo, float *R, float *I)
 	float Hy = Ez*Ax - Ex*Az;
 	float Hz = Ex*Ay - Ey*Ax;
 	float normH =  (float)sqrt(Hx*Hx + Hy*Hy + Hz*Hz);
-	if(normH < 0.1f){
+	if (normH < 0.1f) {
 		return -1;
 	}
 	float invH = 1.0f / normH;
@@ -155,7 +155,7 @@ int getRotationMatrix(float *accel, float *geo, float *R, float *I)
 
 	I[0] = 1;     I[1] = 0;     I[2] = 0;
 	I[3] = 0;     I[4] = c;     I[5] = s;
-	I[6] = 0;     I[7] =-s;     I[8] = c;
+	I[6] = 0;     I[7] = -s;    I[8] = c;
 
 	return 0;
 }
@@ -163,15 +163,15 @@ int getRotationMatrix(float *accel, float *geo, float *R, float *I)
 
 int remapCoordinateSystem(float *inR, int X, int Y, float *outR)
 {
-	if(inR == NULL || outR == NULL)
+	if (inR == NULL || outR == NULL)
 		return -1;
 
-	if ((X & 0x7C)!=0 || (Y & 0x7C)!=0)
-		return -1;   // invalid parameter
-	if (((X & 0x3)==0) || ((Y & 0x3)==0))
-		return -1;   // no axis specified
+	if ((X & 0x7C) != 0 || (Y & 0x7C) != 0)
+		return -1;   /* invalid parameter */
+	if (((X & 0x3) == 0) || ((Y & 0x3) == 0))
+		return -1;   /* no axis specified */
 	if ((X & 0x3) == (Y & 0x3))
-		return -1;   // same axis specified
+		return -1;   /* same axis specified */
 
 	int Z = X ^ Y;
 	int x = (X & 0x3)-1;
@@ -183,17 +183,17 @@ int remapCoordinateSystem(float *inR, int X, int Y, float *outR)
 	if (((x^axis_y)|(y^axis_z)) != 0)
 		Z ^= 0x80;
 
-	char sx = (X>=0x80) ? 1 : 0;
-	char sy = (Y>=0x80) ? 1 : 0;
-	char sz = (Z>=0x80) ? 1 : 0;
+	char sx = (X >= 0x80) ? 1 : 0;
+	char sy = (Y >= 0x80) ? 1 : 0;
+	char sz = (Z >= 0x80) ? 1 : 0;
 
 	int i = 0 , j = 0;
-	for (j=0 ; j<3 ; j++) {
-		int offset = j*3;
-		for (i=0 ; i<3 ; i++) {
-			if (x==i)   outR[offset+i] = sx ? -inR[offset+0] : inR[offset+0];
-			if (y==i)   outR[offset+i] = sy ? -inR[offset+1] : inR[offset+1];
-			if (z==i)   outR[offset+i] = sz ? -inR[offset+2] : inR[offset+2];
+	for (j = 0 ; j < 3 ; j++) {
+		int offset = j * 3;
+		for (i = 0 ; i < 3 ; i++) {
+			if (x == i)   outR[offset+i] = sx ? -inR[offset+0] : inR[offset+0];
+			if (y == i)   outR[offset+i] = sy ? -inR[offset+1] : inR[offset+1];
+			if (z == i)   outR[offset+i] = sz ? -inR[offset+2] : inR[offset+2];
 		}
 	}
 	return 0;
