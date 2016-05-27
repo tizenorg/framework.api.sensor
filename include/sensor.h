@@ -164,8 +164,6 @@ typedef enum
  * @brief Checks whether a given sensor type is available on a device.
  * @details Availability of a sensor should be checked first because this sensor may not be supported on the device.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
- * @remarks For getting a handle of HRM Sensor(including HRM_LED_GREEN, HRM_LED_IR and HRM_LED_RED)
- * the privilege should be set to, %http://tizen.org/privilege/healthinfo.
  *
  * @param[in]   type        The sensor type to check
  * @param[out]  supported   If @c true this sensor type is supported,
@@ -417,6 +415,10 @@ int sensor_listener_unset_accuracy_cb(sensor_listener_h listener);
 
 /**
  * @brief Gets sensor data.
+ * @details	This function may fail (return #SENSOR_ERROR_OPERATION_FAILED) if it is called before the sensor is ready.
+ *			In case of interval-driven sensors,
+ *			it is recommended to call the function after at least one sensor event is delivered.
+ *			Otherwise, applications can retry to call this function to be sure that the sensor is ready.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in]   listener    The listener handle
@@ -428,6 +430,7 @@ int sensor_listener_unset_accuracy_cb(sensor_listener_h listener);
  * @retval      #SENSOR_ERROR_INVALID_PARAMETER    Invalid parameter
  * @retval      #SENSOR_ERROR_NOT_SUPPORTED        The sensor type is not supported in the current device
  * @retval      #SENSOR_ERROR_IO_ERROR             I/O error
+ * @retval      #SENSOR_ERROR_OPERATION_FAILED     Operation failed
  *
  * @pre In order to read sensor data, an application should call sensor_listener_start().
  */
@@ -476,7 +479,7 @@ int sensor_listener_set_max_batch_latency(sensor_listener_h listener, unsigned i
 
 /**
  * @brief Changes the option of the sensor.
- * @details If it is default, sensor data cannot be recieved when the LCD is off and in the power save mode.
+ * @details If it is default, sensor data cannot be received when the LCD is off and in the power save mode.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  *
  * @param[in]   listener        The listener handle
