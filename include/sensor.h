@@ -160,8 +160,6 @@ typedef enum
  * @brief Checks whether a given sensor type is available on a device.
  * @details Availability of a sensor should be checked first because this sensor may not be supported on the device.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
- * @remarks For getting a handle of HRM Sensor(including HRM_LED_GREEN, HRM_LED_IR and HRM_LED_RED)
- * the privilege should be set to, %http://tizen.org/privilege/healthinfo.
  *
  * @param[in]   type        The sensor type to check
  * @param[out]  supported   If @c true this sensor type is supported,
@@ -321,8 +319,8 @@ int sensor_listener_stop(sensor_listener_h listener);
  *
  * @param[in]   listener    The listener handle
  * @param[in]   interval_ms The interval at which sensor events are delivered (in milliseconds) \n
- *                          If @a rate is zero, it uses the default value(100ms) \n
- *                          Min value is 10ms, Max value is 1000ms(10ms ~ 1000ms)
+ *                          If @a rate is zero, it uses the default value(usually 100ms, but it can be different value for each sensor) \n
+ *                          Usually recommended interval range is that, min value is 10ms, max value is 1000ms(10ms ~ 1000ms)
  * @param[in]   callback    The callback function to register
  * @param[in]   data        The user data to be passed to the callback function
  *
@@ -435,8 +433,8 @@ int sensor_listener_read_data(sensor_listener_h listener, sensor_event_s *event)
  *
  * @param[in]   listener       The listener handle
  * @param[in]   interval_ms    The interval at which sensor events are delivered (in milliseconds) \n
- *                             If @a rate is zero, it uses the default value(100ms) \n
- *                             Min value is 10ms, Max value is 1000ms(10ms ~ 1000ms)
+ *                             If @a rate is zero, it uses the default value(usually 100ms, but it can be different value for each sensor) \n
+ *                             Usually recommended interval range is that, min value is 10ms, max value is 1000ms(10ms ~ 1000ms)
  *
  * @return      @c 0 on success,
  *              otherwise a negative error value
